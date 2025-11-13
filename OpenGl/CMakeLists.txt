@@ -26,7 +26,7 @@ target_link_libraries(cube
     ${GLEW_LIBRARIES}
     glm::glm
 )
-# Optional: copy shaders (if you split them into files)
+
 file(COPY ${CMAKE_SOURCE_DIR}/shaders DESTINATION ${CMAKE_BINARY_DIR})
 
 add_custom_command(TARGET cube POST_BUILD
