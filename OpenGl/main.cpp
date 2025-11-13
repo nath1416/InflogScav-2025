@@ -1,38 +1,21 @@
-// cube.cpp
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 
-const char* vertexShaderSource = R"glsl(
-#version 330 core
-layout(location = 0) in vec3 aPos;
-layout(location = 1) in vec3 aColor;
-
-out vec3 vertexColor;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main()
-{
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-    vertexColor = aColor;
+std::string loadShaderSource(const char* filepath) {
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open shader file: " << filepath << std::endl;
+        return "";
+    }
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
 }
-)glsl";
-
-const char* fragmentShaderSource = R"glsl(
-#version 330 core
-in vec3 vertexColor;
-out vec4 FragColor;
-
-void main()
-{
-    FragColor = vec4(vertexColor, 1.0);
-}
-)glsl";
 
 float vertices[] = {
     // positions         // colors
@@ -61,17 +44,20 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-unsigned int compileShader(GLenum type, const char* source)
-{
+unsigned int compileShader(GLenum type, const char* path) {
+    std::string src = loadShaderSource(path);
+    const char* source = src.c_str();
+
     unsigned int shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, NULL);
     glCompileShader(shader);
+
     int success;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
         char info[512];
         glGetShaderInfoLog(shader, 512, NULL, info);
-        std::cerr << "Shader compile error: " << info << std::endl;
+        std::cerr << "Error compiling shader (" << path << "): " << info << std::endl;
     }
     return shader;
 }
@@ -119,9 +105,9 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // compile shaders
-    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, "shaders/vertex.glsl");
+    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
+
 
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
