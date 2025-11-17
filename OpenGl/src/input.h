@@ -1,5 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef INPUT_H
+#define INPUT_H
 
 #include <unordered_map>
 #include <GLFW/glfw3.h>
@@ -28,6 +28,7 @@ public:
     bool getKeyHold(Key k);
     bool getKeyPress(Key k);
     void getMouseMotion(int& x, int& y);
+    void getMousePos(int& x, int& y);
     int getMouseScrollDirection();
 
 private:

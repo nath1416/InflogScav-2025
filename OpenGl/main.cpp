@@ -5,7 +5,58 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cstdlib> 
+#include <ctime>   
+#include <iostream>
+
 #include "src/input.h"
+#include "src/data.h"
+
+float vertices[] = {
+    // Positions          // Normals           // Texture Coords (not used here)
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f, // Back face
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f, // Front face
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f, // Left face
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, // Right face
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f, // Bottom face
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f, // Top face
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+};
+
 
 std::string loadShaderSource(const char* filepath) {
     std::ifstream file(filepath);
@@ -17,28 +68,6 @@ std::string loadShaderSource(const char* filepath) {
     buffer << file.rdbuf();
     return buffer.str();
 }
-
-float vertices[] = {
-    // positions         // colors
-   -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-    0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-    0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-   -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-
-   -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-    0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
-   -0.5f,  0.5f,  0.5f,  0.3f, 0.7f, 1.0f
-};
-
-unsigned int indices[] = {
-    0, 1, 2, 2, 3, 0,
-    4, 5, 6, 6, 7, 4,
-    0, 1, 5, 5, 4, 0,
-    2, 3, 7, 7, 6, 2,
-    0, 3, 7, 7, 4, 0,
-    1, 2, 6, 6, 5, 1
-};
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -96,8 +125,6 @@ int main()
         in->scrollCallback(yoff);
     });
 
-
-
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -106,29 +133,22 @@ int main()
         return -1;
     }
 
-    unsigned int VBO, VAO, EBO;
+    unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, "shaders/vertex.glsl");
-    // unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, "shaders/phong.vs.glsl");
-    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
-    // unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/phong.fs.glsl");
+    unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, "shaders/phong.vs.glsl");
+    unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/phong.fs.glsl");
 
 
     unsigned int shaderProgram = glCreateProgram();
@@ -143,8 +163,14 @@ int main()
     float lastFrame = 0.0f;
 
     glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, -3.0f);
+
+    const int nbLights= 5;
+
+    // glm::vec3 lightPos = glm::vec3(1.2f, 0.0f, 2.0f);
     
     bool run = true;
+    float angle = 45;
+    bool color = false;
     while (!glfwWindowShouldClose(window) && run)
     {
         float currentFrame = glfwGetTime();
@@ -157,11 +183,8 @@ int main()
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
+
     glUseProgram(shaderProgram);
-    
-    // glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-    // glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-    // glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
     
     float speed = 2.5f;
     if (input.getKeyHold(Input::W)) cameraPos.z += speed * deltaTime;
@@ -170,9 +193,20 @@ int main()
     if (input.getKeyHold(Input::D)) cameraPos.x -= speed * deltaTime;
     if (input.getKeyHold(Input::SPACE)) cameraPos.y -= speed * deltaTime;
     if (input.getKeyHold(Input::SHIFT)) cameraPos.y += speed * deltaTime;
+    if (input.getKeyHold(Input::R)){
+
+        angle += speed*deltaTime;
+    }
 
     if (input.getKeyHold(Input::Q)) run = false;
     if (input.getKeyHold(Input::ESC)) run = false;
+    if (input.getKeyPress(Input::E)) color = !color;
+
+    // int x,y;
+    // input.getMousePos(x, y);
+    //     lightPos.y = -y/100;
+    //     lightPos.x = -x/100 + 2;
+    //     std::cout << lightPos.x << std::endl;
     
         
         glm::mat4 model = glm::mat4(1.0f);
@@ -183,7 +217,7 @@ int main()
         model = glm::translate(model, objectPos);
         model = glm::rotate(
             model,
-            (float)glfwGetTime(),
+            angle,
             glm::vec3(0.0f, 1.0f, 0.0f)
         );
 
@@ -207,8 +241,48 @@ int main()
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, &projection[0][0]);
 
+
+
+        unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+        unsigned int viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+        unsigned int firstColorLoc = glGetUniformLocation(shaderProgram, "firstColor");
+        unsigned int secondColorLoc = glGetUniformLocation(shaderProgram, "secondColor");
+
+        float time =  glfwGetTime() / 5;
+
+        glm::vec3 firstColor(0.8);
+        glm::vec3 secondColor(0.2);
+        if(color){
+            float ra = 0.5f + 0.5f * sin(time * 0.6f); 
+            float ga = 0.5f + 0.5f * sin(time * 0.8f + 2.0f); 
+            float ba = 0.5f + 0.5f * sin(time * 1.0f + 4.0f);
+
+            float rb = 0.5f + 0.5f * sin((time+50) * 0.6f ); 
+            float gb = 0.5f + 0.5f * sin((time+50) * 0.8f + 2.0f); 
+            float bb = 0.5f + 0.5f * sin((time+50)* 1.0f + 4.0f);
+            firstColor.x = ra;
+            firstColor.y = ga;
+            firstColor.z = ba;
+
+            secondColor.x = ra;
+            secondColor.y = ga;
+            secondColor.z = ba;
+        }
+        glUniform3f(firstColorLoc, firstColor.x, firstColor.y, firstColor.z);
+        glUniform3f(secondColorLoc, secondColor.x, secondColor.y, secondColor.z);
+
+
+        glm::vec3 lightPos = glm::vec3(2.0f * sin(time), 1.5f, 2.0f * cos(time));
+
+        glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+        glUniform3f(viewPosLoc, cameraPos.x, cameraPos.y, cameraPos.z); 
+
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+        // glBindVertexArray(VAO);
+        // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
     }

@@ -1,70 +1,19 @@
 #version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
 
-const int nLights = 3;
+out vec3 Normal;
+out vec3 FragPos;
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 texCoords;
-layout (location = 2) in vec3 normal;
-
-out ATTRIB_VS_OUT
-{
-    vec2 texCoords;
-    vec3 normal;
-    vec3 lightDir[3];
-    vec3 spotDir[3];
-    vec3 obsPos;
-} attribOut;
-
-uniform mat4 mvp;
+uniform mat4 model;
 uniform mat4 view;
-uniform mat4 modelView;
-uniform mat3 normalMatrix;
-
-struct Material
-{
-    vec3 emission;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
-};
-
-struct UniversalLight
-{
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    vec3 position;
-    vec3 spotDirection;
-};
-
-layout (std140) uniform LightingBlock
-{
-    Material mat;
-    UniversalLight lights[3];
-    vec3 lightModelAmbient;
-    bool useBlinn;
-    bool useSpotlight;
-    bool useDirect3D;
-    float spotExponent;
-    float spotOpeningAngle;
-};
-
-void computerLightVectors(const int index, const vec4 viewPos) {
-    vec4 lightPos = view * vec4(lights[index].position, 1.0);
-    attribOut.lightDir[index] = (view * vec4(lights[index].position, 1.0)).xyz - viewPos.xyz; 
-    attribOut.spotDir[index] = mat3(view) * -lights[index].spotDirection;
-}
+uniform mat4 projection;
 
 void main()
 {
-    gl_Position = mvp * vec4(position, 1.0);
-    attribOut.texCoords = texCoords;
-    attribOut.normal = normalMatrix * normal;
-    vec4 viewPos = view * vec4(position, 1.0);
-    
-    for (int i = 0; i < nLights; i++) {
-        computerLightVectors(i, viewPos);
-    }
-    attribOut.obsPos = -vec3(viewPos.xyz);
+    FragPos = vec3(model * vec4(aPos, 1.0));
+
+    Normal = mat3(transpose(inverse(model))) * aNormal;
+
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

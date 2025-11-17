@@ -20,6 +20,7 @@ void Input::keyCallback(int key, int action)
     else if (action == GLFW_RELEASE)
     {
         m_keysHeld[key] = false;
+        
     }
 }
 
@@ -51,7 +52,10 @@ bool Input::getKeyHold(Key k)
 
 bool Input::getKeyPress(Key k)
 {
-    return m_keysPressed[k];
+    bool state = m_keysPressed[k];
+    m_keysPressed[k] = false;  
+
+    return state;
 }
 
 void Input::getMouseMotion(int& x, int& y)
@@ -60,6 +64,11 @@ void Input::getMouseMotion(int& x, int& y)
     y = m_mouseDeltaY;
 }
 
+void Input::getMousePos(int& x, int& y)
+{
+    x = m_lastMouseX;
+    y = m_lastMouseY;
+}
 int Input::getMouseScrollDirection()
 {
     return m_scroll;

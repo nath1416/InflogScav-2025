@@ -13,7 +13,6 @@ pkg_search_module(GLFW REQUIRED glfw3)
 pkg_search_module(GLEW REQUIRED glew)
 find_package(glm REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(SDL2 REQUIRED)
 
 # Automatically find all .cpp / .h / .hpp in src/
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
@@ -25,17 +24,14 @@ add_executable(cube
     ${HEADER_FILES}
 )
 
-# Include SDL + your src folder
 include_directories(
     src
-    ${SDL2_INCLUDE_DIRS}
     ${GLFW_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
 )
 
 target_link_libraries(cube
-    ${SDL2_LIBRARIES}
     ${OPENGL_LIBRARIES}
     ${GLFW_LIBRARIES}
     ${GLEW_LIBRARIES}
