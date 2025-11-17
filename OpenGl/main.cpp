@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "src/input.h"
 
 std::string loadShaderSource(const char* filepath) {
     std::ifstream file(filepath);
@@ -64,6 +65,7 @@ unsigned int compileShader(GLenum type, const char* path) {
 
 int main()
 {
+    Input input;
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -75,6 +77,26 @@ int main()
         glfwTerminate();
         return -1;
     }
+
+
+    glfwSetWindowUserPointer(window, &input);
+
+    glfwSetKeyCallback(window, [](GLFWwindow* win, int key, int sc, int action, int mods) {
+        Input* in = (Input*)glfwGetWindowUserPointer(win);
+        in->keyCallback(key, action);
+    });
+
+    glfwSetCursorPosCallback(window, [](GLFWwindow* win, double x, double y) {
+        Input* in = (Input*)glfwGetWindowUserPointer(win);
+        in->mouseMoveCallback(x, y);
+    });
+
+    glfwSetScrollCallback(window, [](GLFWwindow* win, double xoff, double yoff) {
+        Input* in = (Input*)glfwGetWindowUserPointer(win);
+        in->scrollCallback(yoff);
+    });
+
+
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -106,7 +128,9 @@ int main()
     glEnableVertexAttribArray(1);
 
     unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, "shaders/vertex.glsl");
+    // unsigned int vertexShader = compileShader(GL_VERTEX_SHADER, "shaders/phong.vs.glsl");
     unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
+    // unsigned int fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/phong.fs.glsl");
 
 
     unsigned int shaderProgram = glCreateProgram();
@@ -120,13 +144,19 @@ int main()
 
     while (!glfwWindowShouldClose(window))
     {
+
         glfwPollEvents();
+
+        if (input.getKeyHold(Input::W))
+            std::cout << "Holding W\n";
+
+
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
 
-        // MVP matrices
         glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
         glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
