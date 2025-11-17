@@ -119,11 +119,9 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // color attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -141,25 +139,66 @@ int main()
     glDeleteShader(fragmentShader);
 
     glEnable(GL_DEPTH_TEST);
+    float deltaTime = 0.0f;
+    float lastFrame = 0.0f;
 
-    while (!glfwWindowShouldClose(window))
+    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, -3.0f);
+    
+    bool run = true;
+    while (!glfwWindowShouldClose(window) && run)
     {
-
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+        
         glfwPollEvents();
+        
+    
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    glUseProgram(shaderProgram);
+    
+    // glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+    // glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+    // glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
+    
+    float speed = 2.5f;
+    if (input.getKeyHold(Input::W)) cameraPos.z += speed * deltaTime;
+    if (input.getKeyHold(Input::S)) cameraPos.z -= speed * deltaTime;
+    if (input.getKeyHold(Input::A)) cameraPos.x += speed * deltaTime;
+    if (input.getKeyHold(Input::D)) cameraPos.x -= speed * deltaTime;
+    if (input.getKeyHold(Input::SPACE)) cameraPos.y -= speed * deltaTime;
+    if (input.getKeyHold(Input::SHIFT)) cameraPos.y += speed * deltaTime;
 
-        if (input.getKeyHold(Input::W))
-            std::cout << "Holding W\n";
+    if (input.getKeyHold(Input::Q)) run = false;
+    if (input.getKeyHold(Input::ESC)) run = false;
+    
+        
+        glm::mat4 model = glm::mat4(1.0f);
+        
+        glm::vec3 objectPos = glm::vec3(0.0f);
+        model = glm::translate(model, objectPos);
 
+        model = glm::translate(model, objectPos);
+        model = glm::rotate(
+            model,
+            (float)glfwGetTime(),
+            glm::vec3(0.0f, 1.0f, 0.0f)
+        );
 
+        glm::mat4 view = glm::translate(
+            glm::mat4(1.0f),
+            cameraPos
+        );
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glm::mat4 projection = glm::perspective(
+            glm::radians(45.0f),
+            800.0f / 600.0f,
+            0.1f,
+            100.0f
+        );
 
-        glUseProgram(shaderProgram);
-
-        glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f);
 
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -174,6 +213,7 @@ int main()
         glfwSwapBuffers(window);
     }
 
+    std::cout << "Goodbye !" << std::endl;
     glfwTerminate();
     return 0;
 }

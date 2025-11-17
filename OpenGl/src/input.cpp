@@ -1,13 +1,11 @@
 #include "input.h"
 
-// Called at start of each frame
 void Input::beginFrame()
 {
     m_mouseDeltaX = 0;
     m_mouseDeltaY = 0;
     m_scroll = 0;
 
-    // key presses remain only for 1 frame
     for (auto& kv : m_keysPressed)
         kv.second = false;
 }
@@ -17,7 +15,7 @@ void Input::keyCallback(int key, int action)
     if (action == GLFW_PRESS)
     {
         m_keysHeld[key] = true;
-        m_keysPressed[key] = true;  // one-frame trigger
+        m_keysPressed[key] = true;  
     }
     else if (action == GLFW_RELEASE)
     {

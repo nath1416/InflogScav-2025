@@ -16,7 +16,8 @@ public:
         D = GLFW_KEY_D,
         Q = GLFW_KEY_Q,
         E = GLFW_KEY_E,
-        SPACE = GLFW_KEY_SPACE
+        SPACE = GLFW_KEY_SPACE,
+        SHIFT = GLFW_KEY_LEFT_SHIFT,
     };
 
     void beginFrame();                 // Reset per-frame data
