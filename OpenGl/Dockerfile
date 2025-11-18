@@ -8,4 +8,4 @@ WORKDIR /app
 COPY . .
 RUN mkdir build && cd build && cmake .. && make -j$(nproc)
 
-CMD ["build/cube"]
+CMD ["cp", "/app/build/cube", "/out"]
