@@ -260,6 +260,7 @@ int main()
             float rb = 0.5f + 0.5f * sin((time+50) * 0.6f ); 
             float gb = 0.5f + 0.5f * sin((time+50) * 0.8f + 2.0f); 
             float bb = 0.5f + 0.5f * sin((time+50)* 1.0f + 4.0f);
+            
             firstColor.x = ra;
             firstColor.y = ga;
             firstColor.z = ba;
