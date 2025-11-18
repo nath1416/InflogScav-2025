@@ -1,9 +1,32 @@
-# To buidl
+# To build
 
+Using docker to build:
+
+```
+sudo docker build -t cube .
+sudo docker run -it --rm -v ./:/out cube
+```
+
+If you get errors when executing the binary, you need to install libraries:
+
+```
+sudo pacman -S mesa glu glfw glew libx11 libxcb libxau libxdmcp
+```
+
+Or manually:
 ```bash
 cmake .
 make
 ```
+
+Usage:
+
+- `e`: Make the cube change colors
+- `r`: Rotate the cube
+- `wasd`: Move the camera
+- `space`: Move up
+- `shift`: Move down
+
 
 Défi:
 > Modéliser et afficher en OpenGL un objet 3D (au choix) avec pipeline moderne (VBO/VAO, shaders) et options visuelles.
