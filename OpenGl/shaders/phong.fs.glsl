@@ -31,7 +31,7 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    vec3 specular = vec3(1.0) * spec; // Specular color remains white (or adjust if needed)
+    vec3 specular = vec3(1.0) * spec; 
 
     vec3 result = ambient + diffuse + specular;
     result = clamp(result, 0.0, 1.0); 
