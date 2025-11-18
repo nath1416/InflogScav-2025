@@ -26,6 +26,7 @@ Usage:
 - `wasd`: Move the camera
 - `space`: Move up
 - `shift`: Move down
+- `t`: Make the object move
 
 
 Défi:

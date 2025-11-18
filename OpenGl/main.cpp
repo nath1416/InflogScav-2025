@@ -171,6 +171,8 @@ int main()
     bool run = true;
     float angle = 45;
     bool color = false;
+    bool pulse = false;
+    float pulseTime = 0;
     while (!glfwWindowShouldClose(window) && run)
     {
         float currentFrame = glfwGetTime();
@@ -193,8 +195,8 @@ int main()
     if (input.getKeyHold(Input::D)) cameraPos.x -= speed * deltaTime;
     if (input.getKeyHold(Input::SPACE)) cameraPos.y -= speed * deltaTime;
     if (input.getKeyHold(Input::SHIFT)) cameraPos.y += speed * deltaTime;
+    if (input.getKeyPress(Input::T)) pulse  = !pulse;
     if (input.getKeyHold(Input::R)){
-
         angle += speed*deltaTime;
     }
 
@@ -247,6 +249,7 @@ int main()
         unsigned int viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
         unsigned int firstColorLoc = glGetUniformLocation(shaderProgram, "firstColor");
         unsigned int secondColorLoc = glGetUniformLocation(shaderProgram, "secondColor");
+        unsigned int timeLoc = glGetUniformLocation(shaderProgram, "time");
 
         float time =  glfwGetTime() / 5;
 
@@ -260,7 +263,7 @@ int main()
             float rb = 0.5f + 0.5f * sin((time+50) * 0.6f ); 
             float gb = 0.5f + 0.5f * sin((time+50) * 0.8f + 2.0f); 
             float bb = 0.5f + 0.5f * sin((time+50)* 1.0f + 4.0f);
-            
+
             firstColor.x = ra;
             firstColor.y = ga;
             firstColor.z = ba;
@@ -271,6 +274,10 @@ int main()
         }
         glUniform3f(firstColorLoc, firstColor.x, firstColor.y, firstColor.z);
         glUniform3f(secondColorLoc, secondColor.x, secondColor.y, secondColor.z);
+        if(pulse){
+            pulseTime += deltaTime;
+            glUniform1f(timeLoc, pulseTime);
+        }
 
 
         glm::vec3 lightPos = glm::vec3(2.0f * sin(time), 1.5f, 2.0f * cos(time));
